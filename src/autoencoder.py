@@ -131,7 +131,7 @@ def define_loss(network, params):
     return loss, losses, loss_refinement
 
 
-def linear_autoencoder(x, input_dim, d):
+def linear_autoencoder(x, input_dim, latent_dim):
     # z,encoder_weights,encoder_biases = encoder(x, input_dim, latent_dim, [], None, 'encoder')
     # x_decode,decoder_weights,decoder_biases = decoder(z, input_dim, latent_dim, [], None, 'decoder')
     z,encoder_weights,encoder_biases = build_network_layers(x, input_dim, latent_dim, [], None, 'encoder')
