@@ -73,6 +73,17 @@ def train_network(training_data, val_data, params):
             sindy_predict_norm_z = np.mean(sess.run(autoencoder_network['ddz'], feed_dict=validation_dict)**2)
         sindy_coefficients = sess.run(autoencoder_network['sindy_coefficients'], feed_dict={})
 
+        if 'encoder_biases' in autoencoder_network.keys():
+            learned_parameters = {'enc_weights': sess.run(autoencoder_network['encoder_weights']),
+                              'enc_biases':  sess.run(autoencoder_network['encoder_biases']),
+                              'dec_weights': sess.run(autoencoder_network['decoder_weights']),
+                              'dec_biases':  sess.run(autoencoder_network['decoder_biases']),
+                              'sindy_coefficients': params['coefficient_mask']*sindy_coefficients}
+        else:
+            learned_parameters = {'enc_weights': sess.run(autoencoder_network['encoder_weights']),
+                              'dec_weights': sess.run(autoencoder_network['decoder_weights']),
+                              'sindy_coefficients': params['coefficient_mask']*sindy_coefficients}
+
         results_dict = {}
         results_dict['num_epochs'] = i
         results_dict['x_norm'] = x_norm
@@ -86,6 +97,7 @@ def train_network(training_data, val_data, params):
         results_dict['training_losses'] = np.array(training_losses)
         results_dict['validation_losses'] = np.array(validation_losses)
         results_dict['sindy_model_terms'] = np.array(sindy_model_terms)
+        results_dict['learned_parameters'] = learned_parameters
 
         return results_dict
 
