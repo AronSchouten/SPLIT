@@ -118,6 +118,7 @@ def print_progress(sess, i, loss, losses, train_dict, validation_dict, x_norm, s
         Can be first or second order time derivatives depending on the model order.
 
     Returns:
+        Tuple of losses calculated on the training set.
         Tuple of losses calculated on the validation set.
     """
     training_loss_vals = sess.run((loss,) + tuple(losses.values()), feed_dict=train_dict)
