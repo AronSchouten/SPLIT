@@ -24,6 +24,7 @@ def train_network(training_data, val_data, params):
     else:
         sindy_predict_norm_x = np.mean(val_data['ddx']**2)
 
+    training_losses = []
     validation_losses = []
     sindy_model_terms = [np.sum(params['coefficient_mask'])]
 
@@ -37,7 +38,9 @@ def train_network(training_data, val_data, params):
                 sess.run(train_op, feed_dict=train_dict)
             
             if params['print_progress'] and (i % params['print_frequency'] == 0):
-                validation_losses.append(print_progress(sess, i, loss, losses, train_dict, validation_dict, x_norm, sindy_predict_norm_x))
+                tr, vl = print_progress(sess, i, loss, losses, train_dict, validation_dict, x_norm, sindy_predict_norm_x)
+                training_losses.append(tr)
+                validation_losses.append(vl)
 
             if params['sequential_thresholding'] and (i % params['threshold_frequency'] == 0) and (i > 0):
                 params['coefficient_mask'] = np.abs(sess.run(autoencoder_network['sindy_coefficients'])) > params['coefficient_threshold']
@@ -53,7 +56,9 @@ def train_network(training_data, val_data, params):
                 sess.run(train_op_refinement, feed_dict=train_dict)
             
             if params['print_progress'] and (i_refinement % params['print_frequency'] == 0):
-                validation_losses.append(print_progress(sess, i_refinement, loss_refinement, losses, train_dict, validation_dict, x_norm, sindy_predict_norm_x))
+                tr, vl = print_progress(sess, i_refinement, loss_refinement, losses, train_dict, validation_dict, x_norm, sindy_predict_norm_x)
+                training_losses.append(tr)
+                validation_losses.append(vl)
 
         if 'save_results' in params.keys():
             if params['save_results']:
@@ -78,6 +83,7 @@ def train_network(training_data, val_data, params):
         results_dict['loss_decoder_sindy'] = final_losses[1]
         results_dict['loss_sindy'] = final_losses[2]
         results_dict['loss_sindy_regularization'] = final_losses[3]
+        results_dict['training_losses'] = np.array(training_losses)
         results_dict['validation_losses'] = np.array(validation_losses)
         results_dict['sindy_model_terms'] = np.array(sindy_model_terms)
 
@@ -112,7 +118,7 @@ def print_progress(sess, i, loss, losses, train_dict, validation_dict, x_norm, s
     decoder_losses = sess.run((losses['decoder'], losses['sindy_x']), feed_dict=validation_dict)
     loss_ratios = (decoder_losses[0]/x_norm, decoder_losses[1]/sindy_predict_norm)
     print("decoder loss ratio: %f, decoder SINDy loss  ratio: %f" % loss_ratios)
-    return validation_loss_vals
+    return training_loss_vals, validation_loss_vals
 
 
 def create_feed_dictionary(data, params, idxs=None):
