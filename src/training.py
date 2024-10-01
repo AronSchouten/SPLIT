@@ -11,7 +11,10 @@ def train_network(training_data, val_data, params):
     learning_rate = tf.placeholder(tf.float32, name='learning_rate')
     train_op = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(loss)
     train_op_refinement = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(loss_refinement)
-    saver = tf.train.Saver(var_list=tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES))
+    
+    if 'save_results' in params.keys():
+        if params['save_results']:
+            saver = tf.train.Saver(var_list=tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES))
 
     validation_dict = create_feed_dictionary(val_data, params, idxs=None)
 
@@ -52,8 +55,10 @@ def train_network(training_data, val_data, params):
             if params['print_progress'] and (i_refinement % params['print_frequency'] == 0):
                 validation_losses.append(print_progress(sess, i_refinement, loss_refinement, losses, train_dict, validation_dict, x_norm, sindy_predict_norm_x))
 
-        saver.save(sess, params['data_path'] + params['save_name'])
-        pickle.dump(params, open(params['data_path'] + params['save_name'] + '_params.pkl', 'wb'))
+        if 'save_results' in params.keys():
+            if params['save_results']:
+                saver.save(sess, params['data_path'] + params['save_name'])
+                pickle.dump(params, open(params['data_path'] + params['save_name'] + '_params.pkl', 'wb'))
         final_losses = sess.run((losses['decoder'], losses['sindy_x'], losses['sindy_z'],
                                  losses['sindy_regularization']),
                                 feed_dict=validation_dict)
