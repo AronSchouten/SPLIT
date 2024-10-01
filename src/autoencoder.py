@@ -1,4 +1,5 @@
 import tensorflow as tf
+import numpy as np
 
 
 def full_network(params):
@@ -54,6 +55,16 @@ def full_network(params):
         sindy_coefficients = tf.get_variable('sindy_coefficients', shape=[library_dim,latent_dim], initializer=tf.constant_initializer(1.0))
     elif params['coefficient_initialization'] == 'normal':
         sindy_coefficients = tf.get_variable('sindy_coefficients', shape=[library_dim,latent_dim], initializer=tf.initializers.random_normal())
+
+    if 'linear_terms' in params.keys(): # If linear terms are specified, fix them
+        linear_terms = params['linear_terms']
+        mask = np.zeros(sindy_coefficients.shape)
+        linear_coefficients= np.zeros(sindy_coefficients.shape)
+        for index, coeff in linear_terms:
+            mask[index] = 1
+            linear_coefficients[index] = coeff
+
+        sindy_coefficients = sindy_coefficients * (1-mask) + linear_coefficients * mask
     
     if params['sequential_thresholding']:
         coefficient_mask = tf.placeholder(tf.float32, shape=[library_dim,latent_dim], name='coefficient_mask')
