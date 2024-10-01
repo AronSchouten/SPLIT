@@ -1,11 +1,18 @@
 import numpy as np
 import tensorflow as tf
 import pickle
-from autoencoder import full_network, define_loss
 
 
 def train_network(training_data, val_data, params):
     # SET UP NETWORK
+    if 'use_bias' in params.keys():
+        if not params['use_bias']:
+            from autoencoder_NoBias import full_network, define_loss
+        else:
+            from autoencoder import full_network, define_loss
+    else:
+        from autoencoder import full_network, define_loss
+
     autoencoder_network = full_network(params)
     loss, losses, loss_refinement = define_loss(autoencoder_network, params)
     learning_rate = tf.placeholder(tf.float32, name='learning_rate')
