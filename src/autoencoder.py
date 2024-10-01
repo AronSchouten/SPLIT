@@ -20,6 +20,10 @@ def full_network(params):
         include_sine = params['include_sine']
     else:
         include_sine = False
+    if 'include_constant' in params.keys():
+        include_constant = params['include_constant']
+    else:
+        include_constant = True
     library_dim = params['library_dim']
     model_order = params['model_order']
 
@@ -37,10 +41,10 @@ def full_network(params):
     
     if model_order == 1:
         dz = z_derivative(x, dx, encoder_weights, encoder_biases, activation=activation)
-        Theta = sindy_library_tf(z, latent_dim, poly_order, include_sine)
+        Theta = sindy_library_tf(z, latent_dim, poly_order, include_sine, include_constant)
     else:
         dz,ddz = z_derivative_order2(x, dx, ddx, encoder_weights, encoder_biases, activation=activation)
-        Theta = sindy_library_tf_order2(z, dz, latent_dim, poly_order, include_sine)
+        Theta = sindy_library_tf_order2(z, dz, latent_dim, poly_order, include_sine, include_constant)
 
     if params['coefficient_initialization'] == 'xavier':
         sindy_coefficients = tf.get_variable('sindy_coefficients', shape=[library_dim,latent_dim], initializer=tf.contrib.layers.xavier_initializer())
@@ -293,7 +297,7 @@ def build_network_layers(input, input_dim, output_dim, widths, activation, name)
 #     return input, weights, biases
 
 
-def sindy_library_tf(z, latent_dim, poly_order, include_sine=False):
+def sindy_library_tf(z, latent_dim, poly_order, include_sine=False, include_constant=True):
     """
     Build the SINDy library.
 
@@ -303,13 +307,17 @@ def sindy_library_tf(z, latent_dim, poly_order, include_sine=False):
         latent_dim - Integer, number of state variable in z.
         poly_order - Integer, polynomial order to which to build the library. Max value is 5.
         include_sine - Boolean, whether or not to include sine terms in the library. Default False.
+        include_constant - boolean, whether or not to include a constant term in the SINDy library. Default True.
 
     Returns:
         2D tensorflow array containing the constructed library. Shape is number of time points by
         number of library functions. The number of library functions is determined by the number
         of state variables of the input, the polynomial order, and whether or not sines are included.
     """
-    library = [tf.ones(tf.shape(z)[0])]
+    library = []
+
+    if include_constant:
+        library.append(tf.ones(tf.shape(z)[0]))
 
     for i in range(latent_dim):
         library.append(z[:,i])
@@ -347,12 +355,15 @@ def sindy_library_tf(z, latent_dim, poly_order, include_sine=False):
     return tf.stack(library, axis=1)
 
 
-def sindy_library_tf_order2(z, dz, latent_dim, poly_order, include_sine=False):
+def sindy_library_tf_order2(z, dz, latent_dim, poly_order, include_sine=False, include_constant=True):
     """
     Build the SINDy library for a second order system. This is essentially the same as for a first
     order system, but library terms are also built for the derivatives.
     """
-    library = [tf.ones(tf.shape(z)[0])]
+    library = []
+
+    if include_constant:
+        library.append(tf.ones(tf.shape(z)[0]))
 
     z_combined = tf.concat([z, dz], 1)
 
