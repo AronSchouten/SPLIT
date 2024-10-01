@@ -1,15 +1,20 @@
-# SindyAutoencoders
+# Simultaneous Projection and Linear Informed Training (SPLIT)
 
-Code for the paper ["Data-driven discovery of coordinates and governing equations"](https://arxiv.org/abs/1904.02107) by Kathleen Champion, Bethany Lusch, J. Nathan Kutz, and Steven L. Brunton.
+Code for the Master Thesis ["Leveraging Autoencoders to Enhance Model Order Reduction for Non-linear Mechanical Dynamical Systems"](https://repository.tudelft.nl/) by Aron Schouten.
 
-The paper contains results for three example problems based on the Lorenz system, a reaction-diffusion system, and the nonlinear pendulum. Code for each example can be found in the respective subfolder in the examples folder. For each example, there are jupyter notebooks for (1) running the training procedure and (2) analyzing the resulting models.
+The code is an extension of the ["SINDy Autoencoders"](https://github.com/kpchamp/SindyAutoencoders).
 
-Our training procedure can be replicated using the jupyter notebooks in each folder, which will run ten instances of the training and produce ten models. Running the notebook will also produce summary output, saved in a Pandas dataframe. The information saved in the dataframe can be used to compare among models. In the paper, we perform a model selection among the resulting models and select a subset of the models to highlight. Our model selection procedure is described in the appendix, along with a detailed description of the training procedure.
+The code contains results for four example problems. Three (a Lorenz system, a reaction-diffusion system, and a nonlinear pendulum) are build for the SINDy Autoencoders, and discussed in the paper ["Data-driven discovery of coordinates and governing equations"](https://arxiv.org/abs/1904.02107) by Kathleen Champion, Bethany Lusch, J. Nathan Kutz, and Steven L. Brunton. One problem, based on a 2D cantilever beam, is specially build for SPLIT. Code for each example can be found in the respective subfolder in the examples folder. For each example, there are jupyter notebooks for (1) running the training procedure and (2) analyzing the resulting models.
 
-For each example, we also include jupyter notebooks to analyze the resulting models. These notebooks produce plots of the results and print out summary statistics on test data. The models analyzed in the paper are included in the repository.
+Creating the network architecture and running the training procedure requires the specification of several parameters.
 
-Creating the network architecture and running the training procedure requires the specification of several parameters. A description of the parameters is as follows:
+A description of the parameters for SPLIT is as follows:
+* `save_results` - boolean, whether or not to produce a summary output, saved in a Pandas dataframe
+* `use_bias` - boolean, whether or not to include biases in network
+* `include_constant` - boolean, whether or not to include a constant term in the SINDy library
+* `linear_terms` - List of tuples containing (index, coefficient) of the a-priori known linear model
 
+A description of the parameters for the SINDy Autoencoders is as follows:
 * `input_dim` - dimension of each sample of the input data
 * `latent_dim` - dimension of the latent space
 * `model_order` - either 1 or 2; determines whether the SINDy model predicts first or second order derivatives
