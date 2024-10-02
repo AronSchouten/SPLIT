@@ -22,23 +22,23 @@ train = '3';
 % Testing trajectory number (1-5)
 test = '2';
 % Forcing amplitude
-epsilon = 6000;
+epsilon = 600;
 % Number of periods to simulate (forced response)
 NumPeriods = 200;
 
-%                       %     AE    % SINDy AE  %   SPLIT   %   SPLIT+  %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%        Method         %    'AE'   % 'SINDyAE' %  'SPLIT'  %  'SPLIT'  %
-% Polynomial regression %    True   %   False   %   False   %    True   %
-%    Use linear terms   %    False  %           %           %    True   %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                       % Decoupled AE %   SINDy AE   %    SPLIT     %    SPLIT+    %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%        Method         %     'AE'     %   'SINDyAE'  %    'SPLIT'   %    'SPLIT'   %
+% Polynomial regression %     True     %     False    %     False    %     True     %
+%    Use linear terms   %     False    %              %              %     True     %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Method
-method = 'AE';
+method = 'SPLIT';
 % Use polynomial regression?
-PolReg = true;
+PolReg = false;
 % Use linear terms in polynomial regression?
-UseLinear = false;
+UseLinear = [];
 
 name = strcat('data\trajectories\unforced_non_linear_', train, '.mat');
 load(name);

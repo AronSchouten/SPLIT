@@ -22,7 +22,7 @@ train = '3';
 % Testing trajectory number (1-5)
 test = '2';
 % Forcing amplitude
-epsilon = 6000;
+epsilon = 600;
 % Number of periods to simulate (forced response)
 NumPeriods = 200;
 
