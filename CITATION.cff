@@ -1,0 +1,9 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Schouten"
+  given-names: "Aron"
+title: "Simultaneous Projection and Linear Informed Training (SPLIT)"
+version: 1.0.0
+date-released: 2024-10-01
+url: "https://github.com/AronSchouten/SPLIT"
